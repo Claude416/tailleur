@@ -1,0 +1,2044 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5" />
+    <title>Tailleur · Marketing & Gestion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: #f4f0eb;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 16px 12px;
+        }
+
+        .app {
+            max-width: 1400px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 20px 22px;
+            transition: all 0.2s;
+        }
+
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e6dfd7;
+            padding-bottom: 14px;
+            margin-bottom: 22px;
+            gap: 12px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2d2a24;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .header h1 small {
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: #7b6e5f;
+            margin-left: 2px;
+        }
+
+        .badge-admin {
+            background: #1e1b16;
+            color: #f9f3ed;
+            font-size: 0.65rem;
+            font-weight: 500;
+            padding: 4px 14px;
+            border-radius: 40px;
+            white-space: nowrap;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 22px;
+        }
+
+        .tab-btn {
+            background: #f0ebe5;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #3b342d;
+            cursor: pointer;
+            transition: 0.2s;
+            flex: 1 1 auto;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .tab-btn.active {
+            background: #2d2a24;
+            color: #fcf8f3;
+            box-shadow: 0 8px 16px -8px rgba(0, 0, 0, 0.25);
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: #e3dad1;
+        }
+
+        .tab-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            filter: grayscale(0.3);
+        }
+
+        .panel {
+            display: none;
+            animation: fade 0.25s ease;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        @keyframes fade {
+            0% { opacity: 0.3; transform: translateY(6px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* CLIENT TOOLBAR */
+        .client-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .client-toolbar input,
+        .client-toolbar select {
+            padding: 10px 16px;
+            border-radius: 60px;
+            border: 1px solid #d6cdc2;
+            background: #faf7f3;
+            font-size: 0.9rem;
+            outline: none;
+            transition: 0.1s;
+            flex: 1 1 180px;
+            min-width: 120px;
+        }
+
+        .client-toolbar input:focus,
+        .client-toolbar select:focus {
+            border-color: #7b6a59;
+            background: white;
+        }
+
+        .client-toolbar input {
+            flex: 2 1 200px;
+        }
+
+        .filter-badge {
+            background: #ede7df;
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            color: #3b342d;
+            white-space: nowrap;
+        }
+
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 12px 0 24px;
+        }
+
+        .model-card {
+            background: #f9f6f2;
+            border-radius: 24px;
+            padding: 14px 12px 18px;
+            border: 1px solid #ece4db;
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .model-card:hover {
+            border-color: #cbb9a8;
+            background: #fcfaf7;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .model-card .model-img {
+            width: 100%;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            border-radius: 18px;
+            background: #e8dfd6;
+            border: 1px solid #dacfc4;
+            margin-bottom: 10px;
+            pointer-events: none;
+        }
+
+        .model-card .model-img[src=""] {
+            opacity: 0.3;
+        }
+
+        .model-card .cat-tag {
+            display: inline-block;
+            background: #ded3c7;
+            padding: 2px 12px;
+            border-radius: 40px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #2b241e;
+            margin-bottom: 6px;
+            align-self: flex-start;
+            pointer-events: none;
+        }
+
+        .model-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1f1b16;
+            pointer-events: none;
+        }
+
+        .model-card .desc {
+            color: #5d5246;
+            font-size: 0.85rem;
+            margin: 4px 0 6px;
+            flex-grow: 1;
+            line-height: 1.4;
+            pointer-events: none;
+        }
+
+        .model-card .price {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #1e2b2c;
+            pointer-events: none;
+        }
+
+        .model-card .price small {
+            font-weight: 400;
+            font-size: 0.75rem;
+            color: #7a6b5b;
+            margin-left: 4px;
+        }
+
+        .model-card .meta {
+            font-size: 0.75rem;
+            color: #6e6255;
+            margin: 4px 0 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            pointer-events: none;
+        }
+
+        .model-card .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+            pointer-events: auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .model-card .actions button {
+            background: #2d2a24;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.15s;
+            flex: 1 1 auto;
+            min-width: 55px;
+        }
+
+        .model-card .actions button:hover {
+            transform: scale(0.95);
+        }
+
+        .model-card .actions .fav-btn {
+            background: transparent;
+            color: #b13e3e;
+            border: 1px solid #d6cdc2;
+        }
+
+        .model-card .actions .fav-btn:hover {
+            background: #f0ebe5;
+        }
+
+        .model-card .actions .fav-btn.active-fav {
+            background: #b13e3e;
+            color: white;
+            border-color: #b13e3e;
+        }
+
+        .model-card .actions .whatsapp-btn {
+            background: #25d366;
+        }
+
+        .model-card .actions .whatsapp-btn:hover {
+            background: #1da851;
+        }
+
+        .model-card .actions .rdv-btn {
+            background: #4a6b4a;
+        }
+
+        .model-card .actions .rdv-btn:hover {
+            background: #2f4d2f;
+        }
+
+        .model-card .actions .devis-btn {
+            background: #d4a24e;
+        }
+
+        .model-card .actions .devis-btn:hover {
+            background: #b8893a;
+        }
+
+        /* MODAL DETAIL */
+        .detail-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.3s;
+            padding: 20px;
+        }
+
+        .detail-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .detail-card {
+            background: white;
+            max-width: 520px;
+            width: 100%;
+            border-radius: 32px;
+            padding: 30px 28px;
+            transform: scale(0.92) translateY(20px);
+            transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-height: 92vh;
+            overflow-y: auto;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.4);
+        }
+
+        .detail-overlay.show .detail-card {
+            transform: scale(1) translateY(0);
+        }
+
+        .detail-card .close-detail {
+            float: right;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #7b6e5f;
+            transition: 0.2s;
+            line-height: 1;
+            padding: 0 8px;
+        }
+
+        .detail-card .close-detail:hover {
+            color: #1f1b16;
+            transform: rotate(90deg);
+        }
+
+        .detail-card .detail-img {
+            width: 100%;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            border-radius: 20px;
+            background: #e8dfd6;
+            border: 1px solid #dacfc4;
+            margin: 8px 0 14px;
+        }
+
+        .detail-card .detail-cat {
+            display: inline-block;
+            background: #ded3c7;
+            padding: 2px 14px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #2b241e;
+            margin-bottom: 6px;
+        }
+
+        .detail-card .detail-name {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #1f1b16;
+        }
+
+        .detail-card .detail-price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e2b2c;
+            margin: 6px 0;
+        }
+
+        .detail-card .detail-price small {
+            font-size: 1rem;
+            color: #7a6b5b;
+            margin-left: 4px;
+        }
+
+        .detail-card .detail-desc {
+            color: #5d5246;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin: 8px 0;
+        }
+
+        .detail-card .detail-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin: 12px 0 16px;
+            padding: 12px 0;
+            border-top: 1px solid #e6dfd7;
+            border-bottom: 1px solid #e6dfd7;
+        }
+
+        .detail-card .detail-meta span {
+            font-size: 0.85rem;
+            color: #6e6255;
+        }
+
+        .detail-card .detail-meta strong {
+            color: #1f1b16;
+        }
+
+        .detail-card .detail-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .detail-card .detail-actions button {
+            padding: 10px 18px;
+            border-radius: 60px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.15s;
+            flex: 1 1 auto;
+            min-width: 70px;
+        }
+
+        .detail-card .detail-actions button:hover {
+            transform: scale(0.96);
+        }
+
+        .detail-card .detail-actions .btn-whatsapp {
+            background: #25d366;
+            color: white;
+        }
+
+        .detail-card .detail-actions .btn-whatsapp:hover {
+            background: #1da851;
+        }
+
+        .detail-card .detail-actions .btn-rdv {
+            background: #4a6b4a;
+            color: white;
+        }
+
+        .detail-card .detail-actions .btn-rdv:hover {
+            background: #2f4d2f;
+        }
+
+        .detail-card .detail-actions .btn-devis {
+            background: #d4a24e;
+            color: white;
+        }
+
+        .detail-card .detail-actions .btn-devis:hover {
+            background: #b8893a;
+        }
+
+        .detail-card .detail-actions .btn-fav-detail {
+            background: transparent;
+            color: #b13e3e;
+            border: 1px solid #d6cdc2;
+        }
+
+        .detail-card .detail-actions .btn-fav-detail:hover {
+            background: #f0ebe5;
+        }
+
+        .detail-card .detail-actions .btn-fav-detail.active-fav {
+            background: #b13e3e;
+            color: white;
+            border-color: #b13e3e;
+        }
+
+        /* ADMIN DASHBOARD */
+        .admin-panel {
+            background: #f8f4ef;
+            border-radius: 28px;
+            padding: 20px;
+        }
+
+        .admin-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 12px;
+        }
+
+        .admin-header h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1f1b16;
+        }
+
+        .btn-unlock {
+            background: #4a6b4a;
+            border: none;
+            color: white;
+            padding: 8px 18px;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        .btn-unlock:hover {
+            background: #2f4d2f;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .dash-card {
+            background: white;
+            border-radius: 20px;
+            padding: 16px 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e6dfd7;
+            transition: 0.15s;
+            cursor: default;
+        }
+
+        .dash-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .dash-card .dash-icon {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+        }
+
+        .dash-card .dash-number {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #1f1b16;
+        }
+
+        .dash-card .dash-label {
+            font-size: 0.8rem;
+            color: #7b6e5f;
+            font-weight: 500;
+        }
+
+        .dash-card .dash-sub {
+            font-size: 0.7rem;
+            color: #94887b;
+            margin-top: 2px;
+        }
+
+        .dash-card.highlight {
+            background: #2d2a24;
+            border-color: #2d2a24;
+        }
+
+        .dash-card.highlight .dash-number,
+        .dash-card.highlight .dash-label,
+        .dash-card.highlight .dash-sub {
+            color: #fcf8f3;
+        }
+
+        .dash-card.highlight .dash-icon {
+            color: #fcf8f3;
+        }
+
+        .admin-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+
+        .admin-toolbar input,
+        .admin-toolbar select {
+            padding: 9px 16px;
+            border-radius: 60px;
+            border: 1px solid #d6cdc2;
+            background: white;
+            font-size: 0.9rem;
+            outline: none;
+            flex: 1 1 150px;
+            min-width: 100px;
+        }
+
+        .admin-toolbar input:focus,
+        .admin-toolbar select:focus {
+            border-color: #7b6a59;
+        }
+
+        .admin-toolbar input {
+            flex: 2 1 180px;
+        }
+
+        .btn-primary {
+            background: #2d2a24;
+            border: none;
+            color: white;
+            padding: 9px 20px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.15s;
+            white-space: nowrap;
+        }
+
+        .btn-primary:hover {
+            background: #15120e;
+            transform: scale(0.97);
+        }
+
+        .btn-danger {
+            background: #b13e3e;
+            border: none;
+            color: white;
+            padding: 5px 14px;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
+        .btn-danger:hover {
+            background: #8f2e2e;
+        }
+
+        .btn-edit {
+            background: #6b5e4f;
+            border: none;
+            color: white;
+            padding: 5px 14px;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
+        .btn-edit:hover {
+            background: #4f4337;
+        }
+
+        .admin-table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .admin-table {
+            width: 100%;
+            min-width: 600px;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.02);
+            font-size: 0.85rem;
+        }
+
+        .admin-table th {
+            text-align: left;
+            padding: 12px 14px;
+            background: #ede7df;
+            color: #2a241f;
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.3px;
+        }
+
+        .admin-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid #eae2d9;
+            color: #211d18;
+            vertical-align: middle;
+        }
+
+        .admin-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .admin-table .thumb {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 10px;
+            background: #e2d7cc;
+            border: 1px solid #d0c2b4;
+            cursor: pointer;
+        }
+
+        .admin-table .status-badge {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 40px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status-badge.available {
+            background: #c8e6c9;
+            color: #1e4a1e;
+        }
+
+        .status-badge.unavailable {
+            background: #ffcdd2;
+            color: #8f2e2e;
+        }
+
+        .admin-table .actions-cell {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 32px 16px;
+            color: #7e7061;
+            font-style: italic;
+        }
+
+        /* MODAL CRUD */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.2s;
+            padding: 16px;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: white;
+            max-width: 540px;
+            width: 100%;
+            padding: 28px 24px;
+            border-radius: 36px;
+            box-shadow: 0 40px 70px rgba(0, 0, 0, 0.3);
+            transform: scale(0.94);
+            transition: 0.2s;
+            max-height: 92vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.show .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #1f1b16;
+        }
+
+        .modal-card label {
+            font-weight: 500;
+            color: #2f2922;
+            display: block;
+            margin: 10px 0 4px;
+            font-size: 0.85rem;
+        }
+
+        .modal-card input,
+        .modal-card textarea,
+        .modal-card select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #d6cdc2;
+            border-radius: 30px;
+            background: #faf7f3;
+            font-size: 0.95rem;
+            outline: none;
+            transition: 0.1s;
+        }
+
+        .modal-card input:focus,
+        .modal-card textarea:focus,
+        .modal-card select:focus {
+            border-color: #7b6a59;
+            background: white;
+        }
+
+        .modal-card textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+
+        .image-upload-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin: 6px 0 4px;
+        }
+
+        .image-upload-area input[type="file"] {
+            display: none;
+        }
+
+        .image-upload-area .file-label {
+            background: #ede7df;
+            padding: 8px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #2d2a24;
+            border: 1px dashed #b5a694;
+            transition: 0.1s;
+            font-size: 0.85rem;
+        }
+
+        .image-upload-area .file-label:hover {
+            background: #e3dad1;
+        }
+
+        .image-preview {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+
+        .image-preview img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 14px;
+            border: 1px solid #d6cdc2;
+            background: #ede7df;
+        }
+
+        .image-preview .remove-img {
+            background: #b13e3e;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.7rem;
+        }
+
+        .image-preview .remove-img:hover {
+            background: #8f2e2e;
+        }
+
+        .gallery-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 6px 0 4px;
+            max-height: 100px;
+            overflow-y: auto;
+            padding: 6px;
+            background: #faf7f3;
+            border-radius: 16px;
+            border: 1px solid #e6dfd7;
+        }
+
+        .gallery-selector .gallery-thumb {
+            width: 52px;
+            height: 52px;
+            object-fit: cover;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: 0.1s;
+        }
+
+        .gallery-selector .gallery-thumb:hover {
+            border-color: #7b6a59;
+            transform: scale(1.04);
+        }
+
+        .gallery-selector .gallery-thumb.selected {
+            border-color: #2d2a24;
+            box-shadow: 0 0 0 2px #2d2a24;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .modal-actions button {
+            padding: 10px 24px;
+            border-radius: 60px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.1s;
+            flex: 1 1 auto;
+            min-width: 80px;
+        }
+
+        .modal-actions .btn-cancel {
+            background: #e6ddd4;
+            color: #2f2922;
+        }
+
+        .modal-actions .btn-cancel:hover {
+            background: #d5c9bc;
+        }
+
+        .modal-actions .btn-save {
+            background: #2d2a24;
+            color: white;
+        }
+
+        .modal-actions .btn-save:hover {
+            background: #14110d;
+        }
+
+        /* PASSWORD */
+        .password-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(6px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.2s;
+            padding: 16px;
+        }
+
+        .password-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .password-card {
+            background: white;
+            max-width: 380px;
+            width: 100%;
+            padding: 30px 26px;
+            border-radius: 36px;
+            text-align: center;
+            transform: scale(0.94);
+            transition: 0.2s;
+        }
+
+        .password-overlay.show .password-card {
+            transform: scale(1);
+        }
+
+        .password-card h2 {
+            font-weight: 600;
+            color: #1f1b16;
+            margin-bottom: 4px;
+        }
+
+        .password-card p {
+            color: #5d5246;
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+        }
+
+        .password-card input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #d6cdc2;
+            border-radius: 60px;
+            font-size: 1rem;
+            background: #faf7f3;
+            outline: none;
+            margin-bottom: 12px;
+        }
+
+        .password-card input:focus {
+            border-color: #7b6a59;
+            background: white;
+        }
+
+        .password-card .error-msg {
+            color: #b13e3e;
+            font-size: 0.85rem;
+            min-height: 22px;
+        }
+
+        .password-card button {
+            background: #2d2a24;
+            border: none;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .password-card button:hover {
+            background: #14110d;
+        }
+
+        .footnote {
+            margin-top: 24px;
+            font-size: 0.75rem;
+            color: #94887b;
+            text-align: center;
+            border-top: 1px solid #e6dfd7;
+            padding-top: 16px;
+        }
+
+        .footnote span {
+            background: #f0ebe5;
+            padding: 4px 12px;
+            border-radius: 40px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .app { padding: 14px; border-radius: 24px; }
+            .header h1 { font-size: 1.4rem; }
+            .tab-btn { font-size: 0.8rem; padding: 8px 14px; min-width: 80px; }
+            .model-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+            .model-card { padding: 12px 10px 14px; }
+            .model-card h3 { font-size: 1rem; }
+            .model-card .price { font-size: 1.1rem; }
+            .dashboard-grid { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; }
+            .dash-card { padding: 12px 10px; }
+            .dash-card .dash-number { font-size: 1.3rem; }
+            .admin-panel { padding: 14px; }
+            .admin-table { font-size: 0.75rem; min-width: 480px; }
+            .admin-table th,
+            .admin-table td { padding: 8px 10px; }
+            .admin-table .thumb { width: 32px; height: 32px; }
+            .modal-card { padding: 20px 16px; }
+            .modal-card h3 { font-size: 1.3rem; }
+            .detail-card { padding: 24px 20px; }
+            .detail-card .detail-name { font-size: 1.3rem; }
+            .detail-card .detail-price { font-size: 1.4rem; }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 8px 6px; }
+            .app { padding: 10px; border-radius: 18px; }
+            .header h1 { font-size: 1.2rem; }
+            .header h1 small { font-size: 0.65rem; }
+            .tab-btn { font-size: 0.7rem; padding: 6px 12px; min-width: 60px; flex: 1 1 40%; }
+            .model-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .model-card { padding: 10px 8px 12px; border-radius: 18px; }
+            .model-card .model-img { border-radius: 12px; }
+            .model-card h3 { font-size: 0.9rem; }
+            .model-card .desc { font-size: 0.75rem; }
+            .model-card .price { font-size: 1rem; }
+            .model-card .meta { font-size: 0.65rem; }
+            .model-card .actions button { font-size: 0.55rem; padding: 4px 8px; min-width: 40px; }
+            .dashboard-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .dash-card { padding: 8px 8px; }
+            .dash-card .dash-number { font-size: 1.1rem; }
+            .dash-card .dash-label { font-size: 0.65rem; }
+            .admin-toolbar input,
+            .admin-toolbar select { font-size: 0.75rem; padding: 6px 10px; min-width: 60px; }
+            .btn-primary { font-size: 0.75rem; padding: 6px 14px; }
+            .btn-unlock { font-size: 0.75rem; padding: 6px 14px; }
+            .admin-table { font-size: 0.6rem; min-width: 340px; }
+            .admin-table th,
+            .admin-table td { padding: 5px 6px; }
+            .admin-table .thumb { width: 24px; height: 24px; border-radius: 4px; }
+            .btn-edit,
+            .btn-danger { font-size: 0.55rem; padding: 2px 8px; }
+            .modal-card { padding: 16px 14px; border-radius: 24px; }
+            .modal-card h3 { font-size: 1.1rem; }
+            .modal-card label { font-size: 0.75rem; margin: 6px 0 2px; }
+            .modal-card input,
+            .modal-card textarea,
+            .modal-card select { font-size: 0.85rem; padding: 8px 12px; }
+            .modal-actions button { font-size: 0.8rem; padding: 8px 16px; min-width: 60px; }
+            .gallery-selector .gallery-thumb { width: 38px; height: 38px; }
+            .image-preview img { width: 48px; height: 48px; }
+            .client-toolbar input,
+            .client-toolbar select { font-size: 0.8rem; padding: 8px 12px; flex: 1 1 100%; min-width: 80px; }
+            .filter-badge { font-size: 0.7rem; }
+            .password-card { padding: 24px 18px; }
+            .password-card h2 { font-size: 1.2rem; }
+            .admin-header h2 { font-size: 1rem; }
+            .detail-card { padding: 18px 14px; }
+            .detail-card .detail-name { font-size: 1.1rem; }
+            .detail-card .detail-price { font-size: 1.2rem; }
+            .detail-card .detail-actions button { font-size: 0.7rem; padding: 6px 12px; min-width: 55px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app">
+
+        <div class="header">
+            <h1>
+                ✂️ Tailleur·euse
+                <small>marketing & gestion</small>
+            </h1>
+            <div>
+                <span class="badge-admin">admin·trice</span>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="client">👗 Client · Modèles</button>
+            <button class="tab-btn" data-tab="admin" id="admin-tab-btn">⚙️ Admin · Dashboard</button>
+        </div>
+
+        <!-- PANEL CLIENT -->
+        <div id="panel-client" class="panel active">
+            <div class="client-toolbar">
+                <input type="text" id="client-search" placeholder="🔍 Rechercher un modèle..." />
+                <select id="client-category-filter">
+                    <option value="">Toutes les catégories</option>
+                    <option value="Homme">Homme</option>
+                    <option value="Femme">Femme</option>
+                    <option value="Enfant">Enfant</option>
+                    <option value="Mariage">Mariage</option>
+                    <option value="Traditionnel">Traditionnel</option>
+                    <option value="Costume">Costume</option>
+                    <option value="Autres">Autres</option>
+                </select>
+                <span class="filter-badge" id="client-count">0 modèles</span>
+            </div>
+            <div id="client-grid" class="model-grid"></div>
+            <div style="background:#f2ece5; border-radius:40px; padding:12px 20px; margin-top:6px; font-size:0.9rem;">
+                <span style="font-weight:500;">💡 Cliquez sur une carte</span> pour voir tous les détails du modèle.
+            </div>
+        </div>
+
+        <!-- PANEL ADMIN -->
+        <div id="panel-admin" class="panel">
+            <div class="admin-panel">
+                <div class="admin-header">
+                    <h2>📊 Tableau de bord</h2>
+                    <div>
+                        <button class="btn-unlock" id="btn-lock-admin">🔒 Verrouiller</button>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid" id="dashboard-grid">
+                    <div class="dash-card highlight">
+                        <div class="dash-icon">📦</div>
+                        <div class="dash-number" id="stat-models">0</div>
+                        <div class="dash-label">Modèles disponibles</div>
+                        <div class="dash-sub">Total en catalogue</div>
+                    </div>
+                    <div class="dash-card">
+                        <div class="dash-icon">🏷️</div>
+                        <div class="dash-number" id="stat-categories">0</div>
+                        <div class="dash-label">Catégories</div>
+                        <div class="dash-sub">Styles différents</div>
+                    </div>
+                    <div class="dash-card">
+                        <div class="dash-icon">⭐</div>
+                        <div class="dash-number" id="stat-popular">0</div>
+                        <div class="dash-label">Modèles populaires</div>
+                        <div class="dash-sub">Prix > 150€</div>
+                    </div>
+                    <div class="dash-card">
+                        <div class="dash-icon">💰</div>
+                        <div class="dash-number" id="stat-revenue">0 €</div>
+                        <div class="dash-label">Revenus estimés</div>
+                        <div class="dash-sub">Basé sur les prix</div>
+                    </div>
+                    <div class="dash-card">
+                        <div class="dash-icon">📈</div>
+                        <div class="dash-number" id="stat-available">0</div>
+                        <div class="dash-label">Disponibles</div>
+                        <div class="dash-sub">Prêts à commander</div>
+                    </div>
+                    <div class="dash-card">
+                        <div class="dash-icon">⏳</div>
+                        <div class="dash-number" id="stat-unavailable">0</div>
+                        <div class="dash-label">Indisponibles</div>
+                        <div class="dash-sub">En rupture / sur mesure</div>
+                    </div>
+                </div>
+
+                <div class="admin-toolbar">
+                    <input type="text" id="admin-search" placeholder="🔍 Rechercher..." />
+                    <select id="admin-category-filter">
+                        <option value="">Toutes catégories</option>
+                        <option value="Homme">Homme</option>
+                        <option value="Femme">Femme</option>
+                        <option value="Enfant">Enfant</option>
+                        <option value="Mariage">Mariage</option>
+                        <option value="Traditionnel">Traditionnel</option>
+                        <option value="Costume">Costume</option>
+                        <option value="Autres">Autres</option>
+                    </select>
+                    <button class="btn-primary" id="btn-add-model">+ Ajouter</button>
+                </div>
+
+                <div class="admin-table-wrapper">
+                    <div id="admin-table-container"></div>
+                </div>
+                <p style="margin-top:14px; color:#6e6255; font-size:0.85rem;">✏️ Éditer ou supprimer — les changements sont immédiats.</p>
+            </div>
+        </div>
+
+        <div class="footnote">
+            <span>🧵 démo · mot de passe : <strong>tailleur123</strong> · WhatsApp: <strong>68191753</strong></span>
+        </div>
+    </div>
+
+    <!-- DETAIL MODAL -->
+    <div id="detail-overlay" class="detail-overlay">
+        <div class="detail-card">
+            <button class="close-detail" id="close-detail">✕</button>
+            <div id="detail-content">
+                <img class="detail-img" id="detail-img" src="" alt="" />
+                <span class="detail-cat" id="detail-cat"></span>
+                <div class="detail-name" id="detail-name"></div>
+                <div class="detail-price" id="detail-price"></div>
+                <div class="detail-desc" id="detail-desc"></div>
+                <div class="detail-meta">
+                    <span>⏱️ <strong id="detail-time"></strong></span>
+                    <span>📦 <strong id="detail-status"></strong></span>
+                </div>
+                <div class="detail-actions">
+                    <button class="btn-fav-detail" id="detail-fav">🤍 Favori</button>
+                    <button class="btn-whatsapp" id="detail-whatsapp">💬 WhatsApp</button>
+                    <button class="btn-rdv" id="detail-rdv">📅 Rendez-vous</button>
+                    <button class="btn-devis" id="detail-devis">📄 Devis</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CRUD -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal-card">
+            <h3 id="modal-title">Nouveau modèle</h3>
+            <label>Nom du modèle *</label>
+            <input type="text" id="modal-name" placeholder="ex: Blazer cintré" />
+            <label>Catégorie *</label>
+            <select id="modal-category">
+                <option value="Homme">Homme</option>
+                <option value="Femme">Femme</option>
+                <option value="Enfant">Enfant</option>
+                <option value="Mariage">Mariage</option>
+                <option value="Traditionnel">Traditionnel</option>
+                <option value="Costume">Costume</option>
+                <option value="Autres">Autres</option>
+            </select>
+            <label>Prix (€) *</label>
+            <input type="number" id="modal-price" placeholder="129.00" step="0.01" min="0" />
+            <label>Description</label>
+            <textarea id="modal-desc" placeholder="Tissu, coupe, détails..."></textarea>
+            <label>Temps de confection</label>
+            <input type="text" id="modal-time" placeholder="5 jours" />
+            <label>Image</label>
+            <div class="image-upload-area">
+                <label class="file-label" for="file-upload">📁 Choisir une image</label>
+                <input type="file" id="file-upload" accept="image/*" />
+                <span style="font-size:0.75rem; color:#7b6a59;">ou sélectionnez depuis la galerie</span>
+            </div>
+            <div class="gallery-selector" id="gallery-selector"></div>
+            <div class="image-preview">
+                <span style="font-size:0.8rem; color:#5d5246;">Aperçu :</span>
+                <img id="modal-image-preview" src="" alt="aperçu" />
+                <button class="remove-img" id="remove-image-btn">✕ Retirer</button>
+            </div>
+            <label>Disponible</label>
+            <select id="modal-available">
+                <option value="true">Oui</option>
+                <option value="false">Non</option>
+            </select>
+            <div class="modal-actions">
+                <button class="btn-cancel" id="modal-cancel">Annuler</button>
+                <button class="btn-save" id="modal-save">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PASSWORD OVERLAY -->
+    <div id="password-overlay" class="password-overlay">
+        <div class="password-card">
+            <h2>🔐 Accès administrateur</h2>
+            <p>Entrez le mot de passe pour gérer les modèles.</p>
+            <input type="password" id="password-input" placeholder="Mot de passe" autofocus />
+            <div class="error-msg" id="password-error"></div>
+            <button id="password-submit">Déverrouiller</button>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ---------- DONNÉES ----------
+            let models = [{
+                id: 1,
+                name: 'Blazer cintré',
+                category: 'Homme',
+                price: 129.00,
+                description: 'Coupe ajustée, laine mélangée, doublure satin. Idéal pour les occasions professionnelles et les soirées.',
+                time: '5 jours',
+                image: 'https://picsum.photos/id/1/400/400',
+                available: true
+            }, {
+                id: 2,
+                name: 'Jupe plissée',
+                category: 'Femme',
+                price: 79.00,
+                description: 'Plis permanents, taille élastiquée, coton léger. Parfaite pour un look élégant au quotidien.',
+                time: '3 jours',
+                image: 'https://picsum.photos/id/21/400/400',
+                available: true
+            }, {
+                id: 3,
+                name: 'Veste de costume',
+                category: 'Costume',
+                price: 189.00,
+                description: 'Classique 2 boutons, poches plaquées, laine vierge. Une pièce intemporelle pour votre garde-robe.',
+                time: '7 jours',
+                image: 'https://picsum.photos/id/26/400/400',
+                available: true
+            }, {
+                id: 4,
+                name: 'Pantalon sur mesure',
+                category: 'Homme',
+                price: 99.00,
+                description: 'Taille ajustable, ourlet personnalisé, tissu premium. Confort et élégance garantis.',
+                time: '4 jours',
+                image: 'https://picsum.photos/id/55/400/400',
+                available: false
+            }, {
+                id: 5,
+                name: 'Robe de mariée',
+                category: 'Mariage',
+                price: 399.00,
+                description: 'Dentelle fine, traîne amovible, corset ajustable. Une robe de rêve pour votre jour spécial.',
+                time: '15 jours',
+                image: 'https://picsum.photos/id/30/400/400',
+                available: true
+            }, {
+                id: 6,
+                name: 'Boubou traditionnel',
+                category: 'Traditionnel',
+                price: 149.00,
+                description: 'Tissu wax, coupe ample, broderies artisanales. Un hommage à la culture et à l\'élégance.',
+                time: '6 jours',
+                image: 'https://picsum.photos/id/42/400/400',
+                available: true
+            }];
+            let nextId = 7;
+
+            let galleryImages = [
+                'https://picsum.photos/id/1/400/400',
+                'https://picsum.photos/id/21/400/400',
+                'https://picsum.photos/id/26/400/400',
+                'https://picsum.photos/id/55/400/400',
+                'https://picsum.photos/id/30/400/400',
+                'https://picsum.photos/id/42/400/400',
+                'https://picsum.photos/id/64/400/400',
+                'https://picsum.photos/id/77/400/400',
+                'https://picsum.photos/id/88/400/400',
+                'https://picsum.photos/id/99/400/400',
+                'https://picsum.photos/id/101/400/400',
+                'https://picsum.photos/id/102/400/400',
+            ];
+
+            let favorites = new Set();
+
+            // ---------- AUTH ----------
+            let isAdminUnlocked = false;
+            const ADMIN_PASSWORD = 'tailleur123';
+            const WHATSAPP_NUMBER = '68191753';
+
+            // DOM refs
+            const clientGrid = document.getElementById('client-grid');
+            const adminContainer = document.getElementById('admin-table-container');
+            const adminTabBtn = document.getElementById('admin-tab-btn');
+            const passwordOverlay = document.getElementById('password-overlay');
+            const passwordInput = document.getElementById('password-input');
+            const passwordError = document.getElementById('password-error');
+            const passwordSubmit = document.getElementById('password-submit');
+            const lockBtn = document.getElementById('btn-lock-admin');
+
+            const statModels = document.getElementById('stat-models');
+            const statCategories = document.getElementById('stat-categories');
+            const statPopular = document.getElementById('stat-popular');
+            const statRevenue = document.getElementById('stat-revenue');
+            const statAvailable = document.getElementById('stat-available');
+            const statUnavailable = document.getElementById('stat-unavailable');
+
+            const clientSearch = document.getElementById('client-search');
+            const clientCategory = document.getElementById('client-category-filter');
+            const clientCount = document.getElementById('client-count');
+
+            const adminSearch = document.getElementById('admin-search');
+            const adminCategory = document.getElementById('admin-category-filter');
+
+            // Detail modal
+            const detailOverlay = document.getElementById('detail-overlay');
+            const closeDetail = document.getElementById('close-detail');
+            const detailImg = document.getElementById('detail-img');
+            const detailCat = document.getElementById('detail-cat');
+            const detailName = document.getElementById('detail-name');
+            const detailPrice = document.getElementById('detail-price');
+            const detailDesc = document.getElementById('detail-desc');
+            const detailTime = document.getElementById('detail-time');
+            const detailStatus = document.getElementById('detail-status');
+            const detailFav = document.getElementById('detail-fav');
+            const detailWhatsapp = document.getElementById('detail-whatsapp');
+            const detailRdv = document.getElementById('detail-rdv');
+            const detailDevis = document.getElementById('detail-devis');
+
+            let currentDetailId = null;
+
+            // CRUD modal
+            const modalOverlay = document.getElementById('modal-overlay');
+            const modalTitle = document.getElementById('modal-title');
+            const modalName = document.getElementById('modal-name');
+            const modalCategory = document.getElementById('modal-category');
+            const modalPrice = document.getElementById('modal-price');
+            const modalDesc = document.getElementById('modal-desc');
+            const modalTime = document.getElementById('modal-time');
+            const modalAvailable = document.getElementById('modal-available');
+            const modalImagePreview = document.getElementById('modal-image-preview');
+            const modalCancel = document.getElementById('modal-cancel');
+            const modalSave = document.getElementById('modal-save');
+            const fileUpload = document.getElementById('file-upload');
+            const gallerySelector = document.getElementById('gallery-selector');
+            const removeImageBtn = document.getElementById('remove-image-btn');
+
+            let editingId = null;
+            let currentImageUrl = '';
+
+            // ---------- RENDER CLIENT ----------
+            function renderClient() {
+                const search = clientSearch.value.toLowerCase().trim();
+                const cat = clientCategory.value;
+
+                let filtered = models.filter(m => {
+                    const matchSearch = m.name.toLowerCase().includes(search) || m.description.toLowerCase().includes(search);
+                    const matchCat = cat === '' || m.category === cat;
+                    return matchSearch && matchCat;
+                });
+
+                clientCount.textContent = filtered.length + ' modèles';
+
+                if (filtered.length === 0) {
+                    clientGrid.innerHTML = `<div class="empty-state">Aucun modèle ne correspond à votre recherche.</div>`;
+                    return;
+                }
+
+                clientGrid.innerHTML = filtered.map(m => {
+                    const isFav = favorites.has(m.id);
+                    return `
+                    <div class="model-card" data-id="${m.id}">
+                        <img class="model-img" src="${m.image || ''}" alt="${escapeHtml(m.name)}" onerror="this.src=''" />
+                        <span class="cat-tag">${escapeHtml(m.category)}</span>
+                        <h3>${escapeHtml(m.name)}</h3>
+                        <div class="desc">${escapeHtml(m.description)}</div>
+                        <div class="price">${m.price.toFixed(2)} <small>€</small></div>
+                        <div class="meta">⏱️ ${escapeHtml(m.time || 'N/C')} · ${m.available ? '✅ Disponible' : '❌ Indisponible'}</div>
+                        <div class="actions">
+                            <button class="fav-btn ${isFav ? 'active-fav' : ''}" data-id="${m.id}">${isFav ? '❤️' : '🤍'} Favori</button>
+                            <button data-id="${m.id}" class="whatsapp-btn">💬 WhatsApp</button>
+                            <button data-id="${m.id}" class="rdv-btn">📅 Rendez-vous</button>
+                            <button data-id="${m.id}" class="devis-btn">📄 Devis</button>
+                        </div>
+                    </div>
+                `}).join('');
+
+                // Click sur la carte -> détail
+                document.querySelectorAll('#client-grid .model-card').forEach(card => {
+                    card.addEventListener('click', function(e) {
+                        // Ne pas ouvrir si on a cliqué sur un bouton
+                        if (e.target.closest('.actions')) return;
+                        const id = parseInt(this.dataset.id);
+                        openDetail(id);
+                    });
+                });
+
+                // Favoris
+                document.querySelectorAll('#client-grid .fav-btn').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const id = parseInt(this.dataset.id);
+                        toggleFavorite(id);
+                        renderClient();
+                    });
+                });
+
+                // WhatsApp
+                document.querySelectorAll('#client-grid .whatsapp-btn').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const id = parseInt(this.dataset.id);
+                        const model = models.find(m => m.id === id);
+                        if (model) {
+                            const msg = encodeURIComponent(
+                                `Bonjour, je suis intéressé par le modèle "${model.name}" (${model.price}€).\nDescription: ${model.description}\nTemps de confection: ${model.time || 'N/C'}`
+                                );
+                            window.open(`https://wa.me/225${WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+                        }
+                    });
+                });
+
+                // Rendez-vous
+                document.querySelectorAll('#client-grid .rdv-btn').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const id = parseInt(this.dataset.id);
+                        const model = models.find(m => m.id === id);
+                        if (model) {
+                            const msg = encodeURIComponent(
+                                `Bonjour, je souhaite prendre un rendez-vous pour discuter du modèle "${model.name}".`
+                                );
+                            window.open(`https://wa.me/225${WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+                        }
+                    });
+                });
+
+                // Devis
+                document.querySelectorAll('#client-grid .devis-btn').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const id = parseInt(this.dataset.id);
+                        const model = models.find(m => m.id === id);
+                        if (model) {
+                            const msg = encodeURIComponent(
+                                `Bonjour, je souhaite obtenir un devis pour le modèle "${model.name}" (${model.price}€).\nDescription: ${model.description}`
+                                );
+                            window.open(`https://wa.me/225${WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+                        }
+                    });
+                });
+            }
+
+            // ---------- DETAIL MODAL ----------
+            function openDetail(id) {
+                const model = models.find(m => m.id === id);
+                if (!model) return;
+                currentDetailId = id;
+
+                detailImg.src = model.image || '';
+                detailImg.alt = model.name;
+                detailCat.textContent = model.category;
+                detailName.textContent = model.name;
+                detailPrice.innerHTML = `${model.price.toFixed(2)} <small>€</small>`;
+                detailDesc.textContent = model.description;
+                detailTime.textContent = model.time || 'N/C';
+                detailStatus.textContent = model.available ? '✅ Disponible' : '❌ Indisponible';
+                detailStatus.style.color = model.available ? '#1e4a1e' : '#8f2e2e';
+
+                const isFav = favorites.has(id);
+                detailFav.textContent = isFav ? '❤️ Favori' : '🤍 Favori';
+                detailFav.classList.toggle('active-fav', isFav);
+
+                detailOverlay.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeDetailModal() {
+                detailOverlay.classList.remove('show');
+                document.body.style.overflow = '';
+                currentDetailId = null;
+            }
+
+            function toggleFavorite(id) {
+                if (favorites.has(id)) {
+                    favorites.delete(id);
+                } else {
+                    favorites.add(id);
+                }
+                renderClient();
+                // Mettre à jour le détail si ouvert
+                if (currentDetailId === id) {
+                    const isFav = favorites.has(id);
+                    detailFav.textContent = isFav ? '❤️ Favori' : '🤍 Favori';
+                    detailFav.classList.toggle('active-fav', isFav);
+                }
+            }
+
+            // ---------- RENDER ADMIN ----------
+            function renderAdmin() {
+                if (!adminContainer) return;
+
+                const search = adminSearch.value.toLowerCase().trim();
+                const cat = adminCategory.value;
+
+                let filtered = models.filter(m => {
+                    const matchSearch = m.name.toLowerCase().includes(search) || m.description.toLowerCase().includes(search);
+                    const matchCat = cat === '' || m.category === cat;
+                    return matchSearch && matchCat;
+                });
+
+                const categories = new Set(models.map(m => m.category));
+                const popular = models.filter(m => m.available && m.price > 150).length;
+                const revenue = models.reduce((sum, m) => sum + (m.available ? m.price : 0), 0);
+                const availableCount = models.filter(m => m.available).length;
+                const unavailableCount = models.filter(m => !m.available).length;
+
+                statModels.textContent = models.length;
+                statCategories.textContent = categories.size;
+                statPopular.textContent = popular;
+                statRevenue.textContent = revenue.toFixed(0) + ' €';
+                statAvailable.textContent = availableCount;
+                statUnavailable.textContent = unavailableCount;
+
+                if (filtered.length === 0) {
+                    adminContainer.innerHTML = `<div class="empty-state">Aucun modèle trouvé.</div>`;
+                    return;
+                }
+
+                let html = `
+                    <table class="admin-table">
+                        <thead><tr>
+                            <th>Image</th><th>Nom</th><th>Catégorie</th><th>Prix</th><th>Dispo</th><th>Actions</th>
+                        </tr></thead>
+                        <tbody>
+                `;
+                filtered.forEach(m => {
+                    const statusClass = m.available ? 'available' : 'unavailable';
+                    const statusText = m.available ? '✅ Disponible' : '❌ Indisponible';
+                    html += `
+                        <tr>
+                            <td><img class="thumb" src="${m.image || ''}" alt="" onerror="this.src=''" /></td>
+                            <td><strong>${escapeHtml(m.name)}</strong><br/><span style="font-size:0.65rem;color:#6e6255;">${escapeHtml(m.time || '')}</span></td>
+                            <td>${escapeHtml(m.category)}</td>
+                            <td>${m.price.toFixed(2)} €</td>
+                            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                            <td>
+                                <div class="actions-cell">
+                                    <button class="btn-edit" data-id="${m.id}">✎ Éditer</button>
+                                    <button class="btn-danger" data-id="${m.id}">🗑 Supprimer</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                html += `</tbody></table>`;
+                adminContainer.innerHTML = html;
+
+                if (isAdminUnlocked) {
+                    document.querySelectorAll('#admin-table-container .btn-edit').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const id = parseInt(this.dataset.id);
+                            openModalForEdit(id);
+                        });
+                    });
+                    document.querySelectorAll('#admin-table-container .btn-danger').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const id = parseInt(this.dataset.id);
+                            if (confirm('Supprimer ce modèle définitivement ?')) {
+                                deleteModel(id);
+                            }
+                        });
+                    });
+                }
+            }
+
+            // ---------- CRUD ----------
+            function deleteModel(id) {
+                if (!isAdminUnlocked) return;
+                models = models.filter(m => m.id !== id);
+                favorites.delete(id);
+                renderAll();
+            }
+
+            function saveModel(name, category, price, description, time, image, available) {
+                if (!name.trim() || !category || price < 0) {
+                    alert('Veuillez remplir le nom, la catégorie et un prix valide.');
+                    return false;
+                }
+                const priceNum = parseFloat(price);
+                if (isNaN(priceNum) || priceNum < 0) {
+                    alert('Le prix doit être un nombre positif.');
+                    return false;
+                }
+
+                if (editingId !== null) {
+                    const existing = models.find(m => m.id === editingId);
+                    if (existing) {
+                        existing.name = name.trim();
+                        existing.category = category;
+                        existing.price = priceNum;
+                        existing.description = description.trim() || 'Aucune description';
+                        existing.time = time.trim() || 'N/C';
+                        existing.image = image || '';
+                        existing.available = available === 'true';
+                    }
+                    editingId = null;
+                } else {
+                    models.push({
+                        id: nextId++,
+                        name: name.trim(),
+                        category: category,
+                        price: priceNum,
+                        description: description.trim() || 'Aucune description',
+                        time: time.trim() || 'N/C',
+                        image: image || '',
+                        available: available === 'true'
+                    });
+                }
+                renderAll();
+                return true;
+            }
+
+            function openModalForEdit(id) {
+                if (!isAdminUnlocked) return;
+                const model = models.find(m => m.id === id);
+                if (!model) return;
+                editingId = id;
+                modalTitle.textContent = '✎ Modifier le modèle';
+                modalName.value = model.name;
+                modalCategory.value = model.category;
+                modalPrice.value = model.price;
+                modalDesc.value = model.description;
+                modalTime.value = model.time || '';
+                currentImageUrl = model.image || '';
+                modalAvailable.value = model.available ? 'true' : 'false';
+                updateImagePreview(currentImageUrl);
+                modalOverlay.classList.add('show');
+                renderGallery();
+            }
+
+            function openModalForAdd() {
+                if (!isAdminUnlocked) return;
+                editingId = null;
+                modalTitle.textContent = '➕ Nouveau modèle';
+                modalName.value = '';
+                modalCategory.value = 'Homme';
+                modalPrice.value = '';
+                modalDesc.value = '';
+                modalTime.value = '';
+                currentImageUrl = '';
+                modalAvailable.value = 'true';
+                updateImagePreview('');
+                modalOverlay.classList.add('show');
+                renderGallery();
+            }
+
+            function updateImagePreview(url) {
+                currentImageUrl = url || '';
+                modalImagePreview.src = currentImageUrl || '';
+                modalImagePreview.style.display = currentImageUrl ? 'block' : 'block';
+            }
+
+            function renderGallery() {
+                gallerySelector.innerHTML = galleryImages.map((img, index) => `
+                    <img class="gallery-thumb ${currentImageUrl === img ? 'selected' : ''}" 
+                         src="${img}" 
+                         data-index="${index}" 
+                         alt="gallery" 
+                         onerror="this.style.display='none'" />
+                `).join('');
+
+                gallerySelector.querySelectorAll('.gallery-thumb').forEach(el => {
+                    el.addEventListener('click', function() {
+                        const url = this.src;
+                        currentImageUrl = url;
+                        updateImagePreview(url);
+                        renderGallery();
+                    });
+                });
+            }
+
+            function closeModal() {
+                modalOverlay.classList.remove('show');
+                editingId = null;
+                fileUpload.value = '';
+            }
+
+            // ---------- AUTH ----------
+            function unlockAdmin(password) {
+                if (password === ADMIN_PASSWORD) {
+                    isAdminUnlocked = true;
+                    passwordOverlay.classList.remove('show');
+                    passwordError.textContent = '';
+                    passwordInput.value = '';
+                    adminTabBtn.disabled = false;
+                    lockBtn.textContent = '🔒 Verrouiller';
+                    renderAdmin();
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    adminTabBtn.classList.add('active');
+                    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+                    document.getElementById('panel-admin').classList.add('active');
+                    return true;
+                } else {
+                    passwordError.textContent = '❌ Mot de passe incorrect';
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                    return false;
+                }
+            }
+
+            function lockAdmin() {
+                isAdminUnlocked = false;
+                adminTabBtn.disabled = false;
+                lockBtn.textContent = '🔒 Verrouillé';
+                if (document.getElementById('panel-admin').classList.contains('active')) {
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelector('[data-tab="client"]').classList.add('active');
+                    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+                    document.getElementById('panel-client').classList.add('active');
+                }
+                renderAdmin();
+            }
+
+            // ---------- EVENTS ----------
+            adminTabBtn.addEventListener('click', function(e) {
+                if (!isAdminUnlocked) {
+                    e.preventDefault();
+                    passwordOverlay.classList.add('show');
+                    passwordInput.focus();
+                    passwordError.textContent = '';
+                }
+            });
+
+            passwordSubmit.addEventListener('click', function() {
+                unlockAdmin(passwordInput.value);
+            });
+
+            passwordInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') unlockAdmin(passwordInput.value);
+            });
+
+            passwordOverlay.addEventListener('click', function(e) {
+                if (e.target === passwordOverlay) {
+                    passwordOverlay.classList.remove('show');
+                    passwordError.textContent = '';
+                    passwordInput.value = '';
+                }
+            });
+
+            lockBtn.addEventListener('click', function() {
+                if (isAdminUnlocked) {
+                    lockAdmin();
+                } else {
+                    passwordOverlay.classList.add('show');
+                    passwordInput.focus();
+                }
+            });
+
+            // Detail events
+            closeDetail.addEventListener('click', closeDetailModal);
+            detailOverlay.addEventListener('click', function(e) {
+                if (e.target === detailOverlay) closeDetailModal();
+            });
+
+            // Detail actions
+            detailFav.addEventListener('click', function() {
+                if (currentDetailId !== null) {
+                    toggleFavorite(currentDetailId);
+                }
+            });
+
+            detailWhatsapp.addEventListener('click', function() {
+                if (currentDetailId !== null) {
+                    const model = models.find(m => m.id === currentDetailId);
+                    if (model) {
+                        const msg = encodeURIComponent(
+                            `Bonjour, je suis intéressé par le modèle "${model.name}" (${model.price}€).\nDescription: ${model.description}\nTemps de confection: ${model.time || 'N/C'}`
+                            );
+                        window.open(`https://wa.me/225${WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+                    }
+                }
+            });
+
+            detailRdv.addEventListener('click', function() {
+                if (currentDetailId !== null) {
+                    const model = models.find(m => m.id === currentDetailId);
+                    if (model) {
+                        const msg = encodeURIComponent(
+                            `Bonjour, je souhaite prendre un rendez-vous pour discuter du modèle "${model.name}".`
+                            );
+                        window.open(`https://wa.me/225${WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+                    }
+                }
+            });
+
+            detailDevis.addEventListener('click', function() {
+                if (currentDetailId !== null) {
+                    const model = models.find(m => m.id === currentDetailId);
+                    if (model) {
+                        const msg = encodeURIComponent(
+                            `Bonjour, je souhaite obtenir un devis pour le modèle "${model.name}" (${model.price}€).\nDescription: ${model.description}`
+                            );
+                        window.open(`https://wa.me/225${WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+                    }
+                }
+            });
+
+            // CRUD modal events
+            modalCancel.addEventListener('click', closeModal);
+            modalOverlay.addEventListener('click', function(e) {
+                if (e.target === modalOverlay) closeModal();
+            });
+
+            modalSave.addEventListener('click', function() {
+                const name = modalName.value;
+                const category = modalCategory.value;
+                const price = modalPrice.value;
+                const description = modalDesc.value;
+                const time = modalTime.value;
+                const image = currentImageUrl;
+                const available = modalAvailable.value;
+                const success = saveModel(name, category, price, description, time, image, available);
+                if (success) closeModal();
+            });
+
+            fileUpload.addEventListener('change', function(e) {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const dataUrl = event.target.result;
+                        galleryImages.push(dataUrl);
+                        currentImageUrl = dataUrl;
+                        updateImagePreview(dataUrl);
+                        renderGallery();
+                    };
+                    reader.readAsDataURL(file);
+                }
+                this.value = '';
+            });
+
+            removeImageBtn.addEventListener('click', function() {
+                currentImageUrl = '';
+                updateImagePreview('');
+                renderGallery();
+            });
+
+            [modalName, modalCategory, modalPrice, modalDesc, modalTime, modalAvailable].forEach(field => {
+                field.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') modalSave.click();
+                });
+            });
+
+            document.getElementById('btn-add-model').addEventListener('click', openModalForAdd);
+
+            clientSearch.addEventListener('input', renderClient);
+            clientCategory.addEventListener('change', renderClient);
+
+            adminSearch.addEventListener('input', renderAdmin);
+            adminCategory.addEventListener('change', renderAdmin);
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (this.dataset.tab === 'admin' && !isAdminUnlocked) {
+                        passwordOverlay.classList.add('show');
+                        passwordInput.focus();
+                        return;
+                    }
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+                    document.getElementById(`panel-${this.dataset.tab}`).classList.add('active');
+                });
+            });
+
+            function escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            function renderAll() {
+                renderClient();
+                renderAdmin();
+            }
+
+            // ---------- INIT ----------
+            adminTabBtn.disabled = false;
+            lockBtn.textContent = '🔒 Verrouillé';
+            renderAll();
+        })();
+    </script>
+</body>
+</html>
